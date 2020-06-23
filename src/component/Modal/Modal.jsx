@@ -1,6 +1,5 @@
 import React from "react";
 import classes from "./Modal.module.css";
-import * as basicLightbox from 'basiclightbox';
 import classNames from 'classnames';
 
 const Modal = ({show, modalImg, handlerClickHide, handlerPressHide}) => {

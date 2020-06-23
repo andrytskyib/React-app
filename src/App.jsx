@@ -1,6 +1,5 @@
 import React from "react";
 import classes from "./App.module.css";
-import * as basicLightbox from 'basiclightbox'
 import Searchbar from "./component/Searchbar/Searchbar";
 import ImageGallery from "./component/ImageGallery/ImageGallery";
 import Button from "./component/Button/Button";
@@ -11,11 +10,11 @@ import Modal from "./component/Modal/Modal";
 class App extends React.Component {
     state = {
         gallery: [],
-        filtered: "",
         pending: false,
-        perpage: 12,
+        perPage: 12,
         showModal: false,
-        modalImg: ""
+        modalImg: "",
+        filter: ''
     }
 
     search = () => {
@@ -23,7 +22,7 @@ class App extends React.Component {
             pending: true
         })
 
-        fetch(`https://pixabay.com/api/?q=${this.state.filtered}&page=1&key=16463810-5b0e0492e2fd924a420e650d3&image_type=photo&orientation=horizontal&per_page=${this.state.perpage}`)
+        fetch(`https://pixabay.com/api/?q=${this.state.filter}&page=1&key=16463810-5b0e0492e2fd924a420e650d3&image_type=photo&orientation=horizontal&per_page=${this.state.perPage}`)
             .then((response) => response.json())
             .then((data) => {
                 this.setState({
@@ -33,23 +32,21 @@ class App extends React.Component {
             });
     }
 
+    handleChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
+
     handlerSubmit = (e) => {
         e.preventDefault();
-
-        this.setState({
-            filtered: e.target.nextElementSibling.value
-        }, this.search)
+        this.search();
     }
 
     handlerClickLoadMore = () => {
         this.setState({
-            perpage: this.state.perpage + 12
+            perPage: this.state.perPage + 12
         }, this.search)
-
-        //     window.scrollTo({
-        //         top: document.documentElement.scrollHeight,
-        //         behavior: "smooth"
-        // });
     }
 
     showModal = (src) => {
@@ -63,16 +60,11 @@ class App extends React.Component {
         this.setState({showModal: false});
     };
 
-    handlerPressHideModal = (e) => {
-        if (e.key === "Escape") {
-            this.setState({showModal: false});
-        }
-    }
-
     render() {
         return (
             <div className={classes.App}>
                 <Searchbar
+                    handleChange={this.handleChange}
                     handlerSubmit={this.handlerSubmit}
                 />
                 <ImageGallery
@@ -100,7 +92,6 @@ class App extends React.Component {
                     show={this.state.showModal}
                     modalImg={this.state.modalImg}
                     handlerClickHide={this.handlerClickHideModal}
-                    handlerPressHide={this.handlerPressHideModal}
                 />
             </div>
         )
